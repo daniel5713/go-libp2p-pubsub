@@ -647,7 +647,7 @@ func (p *PubSub) processLoop(ctx context.Context) {
 					// This is a duplicate message
 					if p.isBeaconBlockTopic(msg.Message.TopicIDs) {
 						multiAddr := p.getPeerMultiAddr(rpc.from)
-						log.Printf("Duplicate block message received from %s, topics: %v", multiAddr, msg.Message.TopicIDs)
+						fmt.Printf("Duplicate block message received from %s, topics: %v", multiAddr, msg.Message.TopicIDs)
 					}
 				}
 			}
