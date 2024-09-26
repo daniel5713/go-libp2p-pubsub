@@ -639,6 +639,7 @@ func (p *PubSub) processLoop(ctx context.Context) {
 		//case rpc := <-p.incoming:
 		//	p.handleIncomingRPC(rpc)
 		case rpc := <-p.incoming:
+			fmt.Printf("LIBP2P-TEST: Received incoming RPC at %s\n", time.Now().Format(time.RFC3339))
     			p.handleIncomingRPC(rpc)
     
     			// Check for duplicate messages
