@@ -9,7 +9,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
+	"strings"
 	pb "github.com/libp2p/go-libp2p-pubsub/pb"
 	"github.com/libp2p/go-libp2p-pubsub/timecache"
 
@@ -636,9 +636,23 @@ func (p *PubSub) processLoop(ctx context.Context) {
 				peers = append(peers, p)
 			}
 			preq.resp <- peers
+		//case rpc := <-p.incoming:
+		//	p.handleIncomingRPC(rpc)
 		case rpc := <-p.incoming:
-			p.handleIncomingRPC(rpc)
+    			p.handleIncomingRPC(rpc)
+    
+    			// Check for duplicate messages
+			for _, msg := range rpc.GetPublish() {
+				if !p.markSeen(msg.Message) {
+					// This is a duplicate message
+					if p.isBeaconBlockTopic(msg.Message.TopicIDs) {
+						multiAddr := p.getPeerMultiAddr(rpc.from)
+						log.Printf("Duplicate block message received from %s, topics: %v", multiAddr, msg.Message.TopicIDs)
+					}
+				}
+			}
 
+			
 		case msg := <-p.sendMsg:
 			p.publishMessage(msg)
 
@@ -674,6 +688,27 @@ func (p *PubSub) processLoop(ctx context.Context) {
 		}
 	}
 }
+
+func (p *PubSub) isBeaconBlockTopic(topics []string) bool {
+	for _, topic := range topics {
+		if strings.Contains(topic, "beacon_block") {
+			return true
+		}
+	}
+	return false
+}
+
+func (p *PubSub) getPeerMultiAddr(peerID peer.ID) string {
+	if p.host == nil {
+		return "unknown"
+	}
+	addrs := p.host.Peerstore().Addrs(peerID)
+	if len(addrs) > 0 {
+		return addrs[0].String()
+	}
+	return "unknown"
+}
+
 
 func (p *PubSub) handlePendingPeers() {
 	p.newPeersPrioLk.Lock()
