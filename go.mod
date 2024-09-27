@@ -1,4 +1,5 @@
-module github.com/libp2p/go-libp2p-pubsub
+//module github.com/libp2p/go-libp2p-pubsub
+module github.com/daniel5713/go-libp2p-pubsub
 
 go 1.22
 
