@@ -1017,7 +1017,7 @@ func (p *PubSub) notifySubs(msg *Message) {
 		case f.ch <- msg:
 		default:
 			p.tracer.UndeliverableMessage(msg)
-			log.Infof("Can't deliver message to subscription for topic %s; subscriber too slow", topic)
+			log.Infof("TEST4: Can't deliver message to subscription for topic %s; subscriber too slow", topic)
 		}
 	}
 }
