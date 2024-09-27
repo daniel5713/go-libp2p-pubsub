@@ -642,7 +642,7 @@ loop:
 }
 
 func (gs *GossipSubRouter) RemovePeer(p peer.ID) {
-	log.Debugf("PEERDOWN: Remove disconnected peer %s", p)
+	log.Infof("PEERDOWN: Remove disconnected peer %s", p)
 	gs.tracer.RemovePeer(p)
 	delete(gs.peers, p)
 	for _, peers := range gs.mesh {
