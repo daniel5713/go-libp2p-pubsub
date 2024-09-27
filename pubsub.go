@@ -1385,6 +1385,7 @@ func (p *PubSub) GetTopics() []string {
 //
 // Deprecated: use pubsub.Join() and topic.Publish() instead
 func (p *PubSub) Publish(topic string, data []byte, opts ...PubOpt) error {
+	log.Infof("Using custom forked libp2p-pubsub version 1.0.0")
 	// ignore whether the topic was newly created or not, since either way we have a valid topic to work with
 	t, _, err := p.tryJoin(topic)
 	if err != nil {
