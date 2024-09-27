@@ -639,7 +639,7 @@ func (p *PubSub) processLoop(ctx context.Context) {
 		//case rpc := <-p.incoming:
 		//	p.handleIncomingRPC(rpc)
 		case rpc := <-p.incoming:
-			fmt.Printf("LIBP2P-TEST: Received incoming RPC at %s\n", time.Now().Format(time.RFC3339))
+			log.Infof("LIBP2P-TEST: Received incoming RPC at %s\n", time.Now().Format(time.RFC3339))
     			p.handleIncomingRPC(rpc)
     
     			// Check for duplicate messages
@@ -648,7 +648,7 @@ func (p *PubSub) processLoop(ctx context.Context) {
 					// This is a duplicate message
 					if p.isBeaconBlockTopic(msg.Message.TopicIDs) {
 						multiAddr := p.getPeerMultiAddr(rpc.from)
-						fmt.Printf("Duplicate block message received from %s, topics: %v", multiAddr, msg.Message.TopicIDs)
+						log.Infof("Duplicate block message received from %s, topics: %v", multiAddr, msg.Message.TopicIDs)
 					}
 				}
 			}
