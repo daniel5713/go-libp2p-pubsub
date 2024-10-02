@@ -613,7 +613,7 @@ func (gs *GossipSubRouter) manageAddrBook() {
 }
 
 func (gs *GossipSubRouter) AddPeer(p peer.ID, proto protocol.ID) {
-	log.Debugf("PEERUP: Add new peer %s using %s", p, proto)
+	log.Debugf("TEST:PEERUP: Add new peer %s using %s", p, proto)
 	gs.tracer.AddPeer(p, proto)
 	gs.peers[p] = proto
 
@@ -642,7 +642,7 @@ loop:
 }
 
 func (gs *GossipSubRouter) RemovePeer(p peer.ID) {
-	log.Infof("PEERDOWN: Remove disconnected peer %s", p)
+	log.Infof("TEST:PEERDOWN: Remove disconnected peer %s", p)
 	gs.tracer.RemovePeer(p)
 	delete(gs.peers, p)
 	for _, peers := range gs.mesh {
@@ -752,18 +752,18 @@ func (gs *GossipSubRouter) handleIHave(p peer.ID, ctl *pb.ControlMessage) []*pb.
 	// we ignore IHAVE gossip from any peer whose score is below the gossip threshold
 	score := gs.score.Score(p)
 	if score < gs.gossipThreshold {
-		log.Debugf("IHAVE: ignoring peer %s with score below threshold [score = %f]", p, score)
+		log.Debugf("TEST:IHAVE: ignoring peer %s with score below threshold [score = %f]", p, score)
 		return nil
 	}
 
 	// IHAVE flood protection
 	gs.peerhave[p]++
 	if gs.peerhave[p] > gs.params.MaxIHaveMessages {
-		log.Debugf("IHAVE: peer %s has advertised too many times (%d) within this heartbeat interval; ignoring", p, gs.peerhave[p])
+		log.Debugf("TEST:IHAVE: peer %s has advertised too many times (%d) within this heartbeat interval; ignoring", p, gs.peerhave[p])
 		return nil
 	}
 	if gs.iasked[p] >= gs.params.MaxIHaveLength {
-		log.Debugf("IHAVE: peer %s has already advertised too many messages (%d); ignoring", p, gs.iasked[p])
+		log.Debugf("TEST:IHAVE: peer %s has already advertised too many messages (%d); ignoring", p, gs.iasked[p])
 		return nil
 	}
 
@@ -783,7 +783,7 @@ func (gs *GossipSubRouter) handleIHave(p peer.ID, ctl *pb.ControlMessage) []*pb.
 		for msgIdx, mid := range ihave.GetMessageIDs() {
 			// prevent remote peer from sending too many msg_ids on a single IHAVE message
 			if msgIdx >= gs.params.MaxIHaveLength {
-				log.Debugf("IHAVE: peer %s has sent IHAVE on topic %s with too many messages (%d); ignoring remaining msgs", p, topic, len(ihave.MessageIDs))
+				log.Debugf("TEST:IHAVE: peer %s has sent IHAVE on topic %s with too many messages (%d); ignoring remaining msgs", p, topic, len(ihave.MessageIDs))
 				break checkIwantMsgsLoop
 			}
 
@@ -803,7 +803,7 @@ func (gs *GossipSubRouter) handleIHave(p peer.ID, ctl *pb.ControlMessage) []*pb.
 		iask = gs.params.MaxIHaveLength - gs.iasked[p]
 	}
 
-	log.Debugf("IHAVE: Asking for %d out of %d messages from %s", iask, len(iwant), p)
+	log.Debugf("TEST:IHAVE: Asking for %d out of %d messages from %s", iask, len(iwant), p)
 
 	iwantlst := make([]string, 0, len(iwant))
 	for mid := range iwant {
@@ -826,7 +826,7 @@ func (gs *GossipSubRouter) handleIWant(p peer.ID, ctl *pb.ControlMessage) []*pb.
 	// we don't respond to IWANT requests from any peer whose score is below the gossip threshold
 	score := gs.score.Score(p)
 	if score < gs.gossipThreshold {
-		log.Debugf("IWANT: ignoring peer %s with score below threshold [score = %f]", p, score)
+		log.Debugf("TEST:IWANT: ignoring peer %s with score below threshold [score = %f]", p, score)
 		return nil
 	}
 
@@ -843,7 +843,7 @@ func (gs *GossipSubRouter) handleIWant(p peer.ID, ctl *pb.ControlMessage) []*pb.
 			}
 
 			if count > gs.params.GossipRetransmission {
-				log.Debugf("IWANT: Peer %s has asked for message %s too many times; ignoring request", p, mid)
+				log.Debugf("TEST:IWANT: Peer %s has asked for message %s too many times; ignoring request", p, mid)
 				continue
 			}
 
@@ -855,7 +855,7 @@ func (gs *GossipSubRouter) handleIWant(p peer.ID, ctl *pb.ControlMessage) []*pb.
 		return nil
 	}
 
-	log.Debugf("IWANT: Sending %d messages to %s", len(ihave), p)
+	log.Debugf("TEST:IWANT: Sending %d messages to %s", len(ihave), p)
 
 	msgs := make([]*pb.Message, 0, len(ihave))
 	for _, msg := range ihave {
